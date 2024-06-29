@@ -18,13 +18,6 @@ USERS_STATISTIC = dict()
 # глобальное хранилище побед и поражений
 USERS_RATING = dict()
 
-# варианты ответов для 3 игры
-dictionary = {
-    1: "Думаю, да",
-    2: "Думаю, нет",
-    3: "Думаю, это возможно"
-}
-
 # баланс
 s4et4ik = 0
 USER_BALANCES = dict()
@@ -35,14 +28,13 @@ def start(message):
     button_guess_the_number = types.KeyboardButton('Игра угадай число от 1 до 10')
     button_casino_game = types.KeyboardButton('🎰Игра казино🎰')
     button_ball_game = types.KeyboardButton('Игра угадай под каким стаканчиком мячик')
-    button_real_life = types.KeyboardButton('Игра с сюжэтом, похожая на реальную жизнь')
     button_balance = types.KeyboardButton('👛Посмотреть свой баланс👛')
     button_cliker = types.KeyboardButton('Кликер')
     button_write_to_the_developer = types.KeyboardButton('📖Написать разработчику📖')
 
     markup = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
     markup.add(button_information, button_cliker, button_guess_the_number, button_casino_game,
-               button_ball_game, button_real_life, button_balance, button_write_to_the_developer)
+               button_ball_game, button_balance, button_write_to_the_developer)
 
     bot.send_message(message.chat.id,
                      f'Hello, {message.from_user.first_name}!\nI am a clicker bot!\nКонтакт моего разработчика: https://t.me/Why_you_skared',
@@ -53,7 +45,7 @@ def start(message):
 def information(message):
     bot.send_message(message.chat.id, 'Спасибо что воспользовали наш бот. Наш бот создан в основном для развлечений.'
                                       'Вы можете сыграть во множество игр. '
-                                      'Так же у нас имеется баланс который вы можете пополнить.'
+                                      'Так же у нас имеется баланс который вы можете пополнить кликая на кнопку.'
                                       'Желаю вам удачной игры.')
 
 
@@ -63,6 +55,8 @@ def start_hearts(message):
     callback = types.InlineKeyboardButton(text="Money", callback_data="knopka")
     keyboard.add(callback)
     bot.send_message(chat_id=message.chat.id, text="Нажмите кнопку:", reply_markup=keyboard)
+
+
 @bot.callback_query_handler(func=lambda call: True)
 def callback_hearts(call):
     if call.data == 'knopka':
@@ -225,168 +219,6 @@ def ball_game(message):
     @bot.message_handler(func=lambda message: message.text == 'Exit')
     def exit(message):
         start(message)
-
-
-@bot.message_handler(func=lambda message: message.text == 'Игра с сюжэтом, похожая на реальную жизнь')
-def real_life(message):
-    bot.send_message(message.chat.id,
-                     "Это игра с сюжетом. Каждый ваш последующий выбор будет влиять на вашу судьбу. "
-                     "Не принимайте неверных решений. Удачи!")
-    bot.send_message(message.chat.id, "Вы заблудились в лесу: ")
-    markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-    button_head_north = types.KeyboardButton("Идти на север")
-    button_head_south = types.KeyboardButton("Идти на юг")
-    markup.add(button_head_north, button_head_south)
-    bot.send_message(message.chat.id, "Выберите направление:", reply_markup=markup)
-
-@bot.message_handler(func=lambda message: message.text == 'Идти на север')
-def go_north(message):
-    bot.send_message(message.chat.id, "Вы пошли на север, но шли так долго, что чуть не умерли от истощения.")
-    button_st = types.KeyboardButton("Поплыть")
-    button_g = types.KeyboardButton("Обойти")
-    markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-    markup.add(button_st, button_g)
-    bot.send_message(message.chat.id, "Вы пошли на север и вышли к болоту."
-                                      " Обойдете или решите плыть?", reply_markup=markup)
-
-@bot.message_handler(func=lambda message: message.text == 'Поплыть')
-def stay(message):
-    button_one = types.KeyboardButton("Пойти посмотреть")
-    button_two = types.KeyboardButton("Пригнуться и спрятаться")
-    markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-    markup.add(button_one, button_two)
-    bot.send_message(message.chat.id, "Вы поплыли и остановились на центре болота,"
-                                      " потому что что-то зашевелилось в кустах."
-                                      "Вы пойдете посмотрите, или пригнетесь и спячитесь?", reply_markup=markup)
-
-@bot.message_handler(func=lambda message: message.text == 'Пойти посмотреть')
-def stay(message):
-    bot.send_message(message.chat.id, "Там оказался медведь и он загрыз вас. Вы проиграли")
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - USER_BALANCES.get(message.chat.id, 0)
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 100
-    start(message)
-
-
-@bot.message_handler(func=lambda message: message.text == 'Пригнуться и спрятаться')
-def stay(message):
-    bot.send_message(message.chat.id, "Медведь вылез из кустов и прошел мимо. Вы победили")
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) * 6
-    start(message)
-
-@bot.message_handler(func=lambda message: message.text == 'Обойти')
-def stay(message):
-    button_one = types.KeyboardButton("Побежать оттуда")
-    button_two = types.KeyboardButton("Пригнуться и спрятаться.")
-    markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-    markup.add(button_one, button_two)
-    bot.send_message(message.chat.id, "Вы вышли на лагерь разбойников", reply_markup=markup)
-
-@bot.message_handler(func=lambda message: message.text == 'Побежать оттуда')
-def stay(message):
-    bot.send_message(message.chat.id, "Вы побежали и они вас заметили."
-                                      "Вы долго бежали и вдруг почувствовали мягкость под ногами."
-                                      "Жаль но это была ловушка разбойников. Вы проиграли.")
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - USER_BALANCES.get(message.chat.id, 0)
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 100
-    start(message)
-
-@bot.message_handler(func=lambda message: message.text == 'Пригнуться и спрятаться.')
-def stay(message):
-    bot.send_message(message.chat.id, "Вы пригнулись. когда они заснули вы ограбили их и спокойно ушли оттуда."
-                                      "Вы молодец, ведь вы победили и наткнулись на пасхалку."
-                                      "Вам начисляется 1000 монет если отгадаете ответ на вопрос:")
-
-    button_one = types.KeyboardButton("Сыграть супер игру и ответить на вопрос")
-    button_two = types.KeyboardButton("Выйти в меню и просто забрать выйгрыш")
-    markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-    markup.add(button_one, button_two)
-    bot.send_message(message.chat.id, "Вы вышли на лагерь разбойников", reply_markup=markup)
-
-@bot.message_handler(func=lambda message: message.text == 'Выйти в меню и просто забрать выйгрыш')
-def stay(message):
-    bot.send_message(message.chat.id, "Жаль что не захотели сыграть в супер игру, но вы победили. "
-                                      "Поздравляю с победой")
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) * 6
-    start(message)
-
-
-@bot.message_handler(func=lambda message: message.text == 'Сыграть супер игру и ответить на вопрос')
-def stay(message):
-    bot.send_message(message.chat.id, "А вы рискованный человек. Мне нравится ваш ход мыслей!!!")
-
-    button_one = types.KeyboardButton("2016")
-    button_two = types.KeyboardButton("1992")
-    button_tree = types.KeyboardButton("1998")
-    button_fore = types.KeyboardButton("2003")
-    markup = types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
-    markup.add(button_one, button_two, button_tree, button_fore)
-    bot.send_message(message.chat.id, "И так вопрос: В каком году в Белоруссии была денежная реформа,"
-                                      "а именно были введены деньги,"
-                                      " которыми мы пользуемся сейчас?",reply_markup=markup)
-
-@bot.message_handler(func=lambda message: message.text == '2016')
-def stay(message):
-    bot.send_message(message.chat.id, "ИИИИИИИ ВЫ ПОБЕДИЛИ В СУПЕР ИГРЕ!!!!!!!!! ВЫ ОГРОМНЫЙ МОЛОДЕЦ!!!!!")
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 1000
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) * 6
-    start(message)
-
-@bot.message_handler(func=lambda message: message.text == '1992')
-def stay(message):
-    bot.send_message(message.chat.id, "Увы, но вы проиграли, не расстраивайтесь у вас точно все получится.")
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - USER_BALANCES.get(message.chat.id, 0)
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 100
-    start(message)
-
-@bot.message_handler(func=lambda message: message.text == '1998')
-def stay(message):
-    bot.send_message(message.chat.id, "Увы, но вы проиграли, не расстраивайтесь у вас точно все получится.")
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - USER_BALANCES.get(message.chat.id, 0)
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 100
-    start(message)
-
-
-@bot.message_handler(func=lambda message: message.text == '2003')
-def stay(message):
-    bot.send_message(message.chat.id, "Увы, но вы проиграли, не расстраивайтесь у вас точно все получится.")
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - USER_BALANCES.get(message.chat.id, 0)
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 100
-    start(message)
-
-
-@bot.message_handler(func=lambda message: message.text == 'Идти на юг')
-def go_south(message):
-    markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-    button_stay = types.KeyboardButton("Отдохнуть")
-    button_go = types.KeyboardButton("Пойти дальше")
-    markup.add(button_stay, button_go)
-    bot.send_message(message.chat.id, "Вы пошли на юг и вышли к опушке."
-                                      " Продолжать идти или остаться отдохнуть?", reply_markup=markup)
-
-@bot.message_handler(func=lambda message: message.text == 'Отдохнуть')
-def stay(message):
-    bot.send_message(message.chat.id, "Вы остались на опушке и вас убил медведь. Вы проиграли")
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - USER_BALANCES.get(message.chat.id, 0)
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 100
-    start(message)
-
-
-@bot.message_handler(func=lambda message: message.text == 'Пойти дальше')
-def continue_going(message):
-    bot.send_message(message.chat.id, "Вы пошли дальше и вышли на шоссе. Вы спасены! Победа!")
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
-    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) * 6
-    start(message)
-
 
 @bot.message_handler(func=lambda message: message.text == '👛Посмотреть свой баланс👛')
 def balance(message):
