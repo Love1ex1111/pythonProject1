@@ -1,6 +1,8 @@
 import telebot
 from telebot import types
 import random
+import webbrowser
+
 
 TOKEN = '7123172947:AAEaVFi_tNexmNNBArIXZTEADZ_llfkLjKo'
 
@@ -24,28 +26,26 @@ dictionary = {
 }
 
 # баланс
-USER_BALANCES = dict()
-
 s4et4ik = 0
-
+USER_BALANCES = dict()
 
 @bot.message_handler(commands=['start'])
 def start(message):
     button_information = types.KeyboardButton('Информация о боте')
     button_guess_the_number = types.KeyboardButton('Игра угадай число от 1 до 10')
-    button_casino_game = types.KeyboardButton('Игра казино')
-    button_making_decisions = types.KeyboardButton('Бот ответит на любой вопрос '
-                                                   '(Вопросы задавайте на которые нужно отвечать да/нет)')
+    button_casino_game = types.KeyboardButton('🎰Игра казино🎰')
     button_ball_game = types.KeyboardButton('Игра угадай под каким стаканчиком мячик')
     button_real_life = types.KeyboardButton('Игра с сюжэтом, похожая на реальную жизнь')
-    button_balance = types.KeyboardButton('Посмотреть свой баланс')
+    button_balance = types.KeyboardButton('👛Посмотреть свой баланс👛')
     button_cliker = types.KeyboardButton('Кликер')
+    button_write_to_the_developer = types.KeyboardButton('📖Написать разработчику📖')
 
-    markup = types.ReplyKeyboardMarkup(row_width=8, resize_keyboard=True)
-    markup.add(button_information, button_cliker, button_guess_the_number, button_casino_game, button_making_decisions,
-               button_ball_game, button_real_life, button_balance)
+    markup = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
+    markup.add(button_information, button_cliker, button_guess_the_number, button_casino_game,
+               button_ball_game, button_real_life, button_balance, button_write_to_the_developer)
 
-    bot.send_message(message.chat.id, 'Вас приветствует наш бот, выберите одну из функций бота пожалуйста',
+    bot.send_message(message.chat.id,
+                     f'Hello, {message.from_user.first_name}!\nI am a clicker bot!\nКонтакт моего разработчика: https://t.me/Why_you_skared',
                      reply_markup=markup)
 
 
@@ -67,10 +67,11 @@ def start_hearts(message):
 def callback_hearts(call):
     if call.data == 'knopka':
         global s4et4ik
-        s4et4ik += 1
+        s4et4ik += 10
         bot.answer_callback_query(call.id)
-        bot.send_message(call.message.chat.id, 'Кнопка нажата '+str(s4et4ik)+str(' раз!'))
-bot.polling(none_stop=True)
+        bot.send_message(call.message.chat.id, 'Кнопка нажата ')
+
+
 
 @bot.message_handler(func=lambda message: message.text == 'Игра угадай число от 1 до 10')
 def guess_the_number(message):
@@ -90,6 +91,7 @@ def guess_the_number(message):
                 bot.send_message(message.chat.id,
                                  'Поздравляем, вы угадали число! '
                                  'Нажмите "Начать игру", чтобы сыграть ещё раз')
+                USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
                 USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 60
                 USERS_STATES.pop(message.chat.id)
             else:
@@ -99,6 +101,7 @@ def guess_the_number(message):
                 else:
                     bot.send_message(message.chat.id,
                                      'Неправильно(( И попытки кончились(( Нажмите "Начать игру", чтобы отыграться')
+                    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
                     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - 30
                     USERS_STATES.pop(message.chat.id)
         except ValueError as e:
@@ -110,7 +113,7 @@ def guess_the_number(message):
             bot.send_message(message.chat.id, 'Что-то пошло не так')
 
 
-@bot.message_handler(func=lambda message: message.text == 'Игра казино')
+@bot.message_handler(func=lambda message: message.text == '🎰Игра казино🎰')
 def casino_game(message):
     bot.send_message(message.chat.id, "Это игра казино. Здесь бот загадал число, а вы должны угадать цвет этого "
                                       "числа. Числа от 1 до 100 включительно. Цвета: красный, белый, черный."
@@ -135,43 +138,37 @@ def casino_game(message):
             if user_guess == "1.":
                 if bot_number in white_numbers:
                     bot.send_message(message.chat.id, "Вы победили!")
+                    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
                     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 20
                 else:
                     bot.send_message(message.chat.id, "Вы проиграли!")
+                    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
                     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - 50
                     print(bot_number)
             elif user_guess == "2.":
                 if bot_number in red_numbers:
                     bot.send_message(message.chat.id, "Вы победили!")
+                    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
                     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 40
                 else:
                     bot.send_message(message.chat.id, "Вы проиграли!")
+                    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
                     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) -50
                     print(bot_number)
             elif user_guess == "3.":
                 if bot_number in black_numbers:
                     bot.send_message(message.chat.id, "Вы победили!")
+                    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
                     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 100
                 else:
                     bot.send_message(message.chat.id, "Вы проиграли!")
+                    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
                     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - 130
                     print(bot_number)
             else:
                 bot.send_message(message.chat.id, "Что-то пошло не так!")
         except Exception as e:
             bot.send_message(message.chat.id, "Что-то пошло не так!")
-
-
-@bot.message_handler(func=lambda message: message.text == 'Бот ответит на любой вопрос '
-                                                          '(Вопросы задавайте на которые нужно отвечать да/нет)')
-def making_decisions(message):
-    bot.send_message(message.chat.id, 'Введите вопрос пожалуйста')
-
-    @bot.message_handler(content_types=['text'])
-    def answer(message):
-        random_key = random.choice(list(dictionary.keys()))
-        random_value = dictionary[random_key]
-        bot.send_message(message.chat.id, random_value)
 
 
 @bot.message_handler(func=lambda message: message.text == 'Игра угадай под каким стаканчиком мячик')
@@ -190,10 +187,12 @@ def ball_game(message):
     def first(message):
         while ball == '1':
             bot.send_message(message.chat.id, 'Поздравляю с победой')
+            USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
             USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 60
             return USER_BALANCES
         else:
             bot.send_message(message.chat.id, 'Ты проиграл, попробуй еще раз')
+            USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
             USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - 35
             return USER_BALANCES
 
@@ -201,10 +200,12 @@ def ball_game(message):
     def two(message):
         while ball == '2':
             bot.send_message(message.chat.id, 'Поздравляю с победой')
+            USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
             USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 60
             return USER_BALANCES
         else:
             bot.send_message(message.chat.id, 'Ты проиграл, попробуй еще раз')
+            USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
             USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - 35
             return USER_BALANCES
 
@@ -212,10 +213,12 @@ def ball_game(message):
     def two(message):
         while ball == '3':
             bot.send_message(message.chat.id, 'Поздравляю с победой')
+            USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
             USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 60
             return USER_BALANCES
         else:
             bot.send_message(message.chat.id, 'Ты проиграл, попробуй еще раз')
+            USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
             USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - 35
             return USER_BALANCES
 
@@ -259,6 +262,7 @@ def stay(message):
 @bot.message_handler(func=lambda message: message.text == 'Пойти посмотреть')
 def stay(message):
     bot.send_message(message.chat.id, "Там оказался медведь и он загрыз вас. Вы проиграли")
+    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - USER_BALANCES.get(message.chat.id, 0)
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 100
     start(message)
@@ -267,6 +271,7 @@ def stay(message):
 @bot.message_handler(func=lambda message: message.text == 'Пригнуться и спрятаться')
 def stay(message):
     bot.send_message(message.chat.id, "Медведь вылез из кустов и прошел мимо. Вы победили")
+    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) * 6
     start(message)
 
@@ -283,6 +288,7 @@ def stay(message):
     bot.send_message(message.chat.id, "Вы побежали и они вас заметили."
                                       "Вы долго бежали и вдруг почувствовали мягкость под ногами."
                                       "Жаль но это была ловушка разбойников. Вы проиграли.")
+    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - USER_BALANCES.get(message.chat.id, 0)
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 100
     start(message)
@@ -303,6 +309,7 @@ def stay(message):
 def stay(message):
     bot.send_message(message.chat.id, "Жаль что не захотели сыграть в супер игру, но вы победили. "
                                       "Поздравляю с победой")
+    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) * 6
     start(message)
 
@@ -324,6 +331,7 @@ def stay(message):
 @bot.message_handler(func=lambda message: message.text == '2016')
 def stay(message):
     bot.send_message(message.chat.id, "ИИИИИИИ ВЫ ПОБЕДИЛИ В СУПЕР ИГРЕ!!!!!!!!! ВЫ ОГРОМНЫЙ МОЛОДЕЦ!!!!!")
+    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 1000
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) * 6
     start(message)
@@ -331,6 +339,7 @@ def stay(message):
 @bot.message_handler(func=lambda message: message.text == '1992')
 def stay(message):
     bot.send_message(message.chat.id, "Увы, но вы проиграли, не расстраивайтесь у вас точно все получится.")
+    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - USER_BALANCES.get(message.chat.id, 0)
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 100
     start(message)
@@ -338,6 +347,7 @@ def stay(message):
 @bot.message_handler(func=lambda message: message.text == '1998')
 def stay(message):
     bot.send_message(message.chat.id, "Увы, но вы проиграли, не расстраивайтесь у вас точно все получится.")
+    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - USER_BALANCES.get(message.chat.id, 0)
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 100
     start(message)
@@ -346,6 +356,7 @@ def stay(message):
 @bot.message_handler(func=lambda message: message.text == '2003')
 def stay(message):
     bot.send_message(message.chat.id, "Увы, но вы проиграли, не расстраивайтесь у вас точно все получится.")
+    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - USER_BALANCES.get(message.chat.id, 0)
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 100
     start(message)
@@ -363,6 +374,7 @@ def go_south(message):
 @bot.message_handler(func=lambda message: message.text == 'Отдохнуть')
 def stay(message):
     bot.send_message(message.chat.id, "Вы остались на опушке и вас убил медведь. Вы проиграли")
+    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) - USER_BALANCES.get(message.chat.id, 0)
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + 100
     start(message)
@@ -371,13 +383,18 @@ def stay(message):
 @bot.message_handler(func=lambda message: message.text == 'Пойти дальше')
 def continue_going(message):
     bot.send_message(message.chat.id, "Вы пошли дальше и вышли на шоссе. Вы спасены! Победа!")
+    USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) + s4et4ik
     USER_BALANCES[message.chat.id] = USER_BALANCES.get(message.chat.id, 0) * 6
     start(message)
 
 
-@bot.message_handler(func=lambda message: message.text == 'Посмотреть свой баланс')
+@bot.message_handler(func=lambda message: message.text == '👛Посмотреть свой баланс👛')
 def balance(message):
-    bot.send_message(message.chat.id, f'Ваш баланс составляет: {USER_BALANCES[message.chat.id]}')
+    bot.send_message(message.chat.id, f'Ваш баланс составляет: {USER_BALANCES.get(message.chat.id, 0) + s4et4ik}')
+
+@bot.message_handler(func=lambda message: message.text == '📖Написать разработчику📖')
+def write_to_the_developer(message):
+    webbrowser.open('https://t.me/Why_you_skared')
 
 
 bot.infinity_polling()
